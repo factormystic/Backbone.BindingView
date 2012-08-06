@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+	<script src="jquery-1.7.2.js" type="text/javascript"></script>
+	<script src="underscore-1.3.3.js" type="text/javascript"></script>
+	<script src="backbone-0.9.2.js" type="text/javascript"></script>
+	
+	<script src="Backbone.BindingView.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		window.PersonFeeView = Backbone.BindingView.extend({
+			el: '.put-person-fee-view-here',
+			template: '#person-fee-template',
+
+			events: {
+				'click .update-model': 'clickUpdateModel',
+			},
+
+			bindings: {
+				'html div.first-name': 'first_name',
+				'div.last-name': 'last_name',
+				'div.fee-total': ['fee_total', 'money'],
+
+				'keyup value input.first-name': 'first_name',
+				'keyup value input.last-name': 'last_name',
+				'keyup value input.fee-total': 'fee_total',
+			},
+
+			money: function(value) {
+				return '$'+ value;
+			},
+
+			clickUpdateModel: function(e) {
+				if (this.model.get('first_name') == 'Herbert') {
+					this.model.set('first_name', 'William Henry <i>"Boss"</i>');
+				} else {
+					this.model.set('first_name', 'Herbert');
+				}
+			},
+		});
+				
+		window.PersonFee = Backbone.Model.extend({
+			default: {
+				'first_name': '',
+				'last_name': '',
+				'fee_total': 0
+			},
+
+			initialize: function() {
+				//might also be set in a collection's add event...
+				this.view = new PersonFeeView({model: this});
+			}
+		})
+	</script>
+
+	<style type="text/css">
+		.first-name, .last-name {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<div class="put-person-fee-view-here"></div>
+
+	<script id="person-fee-template" type="text/template">
+		<div class="first-name" />
+		<div class="last-name" />
+		<div class="fee-total" />
+		<button class="update-model">Update Model Data</button>
+		
+		<br/><br/>
+
+		<input class="first-name" type="text" />
+		<input class="last-name" type="text" />
+		$<input class="fee-total" type="text" />
+	</script>
+
+	<script type="text/javascript">
+		var somePersonFee = new PersonFee({first_name: 'Herbert', last_name: 'Hoover', fee_total: 100});
+		somePersonFee.view.render();
+	</script>
+</body>
+</html>
